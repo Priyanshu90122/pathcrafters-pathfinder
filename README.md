@@ -43,5 +43,3 @@ Health check: http://127.0.0.1:8000/api/health
 3. Confirm the dashboard roadmap changes immediately.
 4. Run Skill Assessment and change a skill score; the roadmap regenerates.
 
-## Security
-Never commit `.env` or a real Gemini API key. Submit `.env.example` only.
