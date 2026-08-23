@@ -1,4 +1,4 @@
-# PathPilot AI — Adaptive Personalized Learning Path Recommender
+# PathFinder
 
 A Gemini-powered learning assistant that turns a learner's natural-language goal, experience, skills, time budget and feedback into an adaptive roadmap of resources, projects, prerequisites and milestones.
 
