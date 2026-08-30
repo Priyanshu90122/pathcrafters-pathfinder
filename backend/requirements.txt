@@ -3,3 +3,6 @@ uvicorn[standard]
 pydantic
 python-dotenv
 google-genai
+sqlmodel
+passlib[bcrypt]
+

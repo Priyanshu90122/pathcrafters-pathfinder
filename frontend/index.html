@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PathPilot AI</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#070a10;color:#edf2ff;font:14px Inter,system-ui}.app{display:flex;min-height:100vh}.side{width:240px;background:#090d14;border-right:1px solid #202a39;padding:22px 14px}.logo{font-size:23px;font-weight:900;margin:5px 10px 28px}.logo b{color:#8d73ff}.nav{display:grid;gap:5px}.nav button{background:transparent;color:#94a1b5;text-align:left}.nav button.active{background:#19172e;color:#fff}.main{flex:1;max-width:1450px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;gap:15px}.eyebrow{color:#9d88ff;font-weight:800;letter-spacing:.12em;font-size:11px}.title{font-size:32px;font-weight:900;margin:4px 0}.muted,.small{color:#8997aa}.small{font-size:12px}.hero,.card{border:1px solid #253145;background:#0d141e;border-radius:17px}.hero{margin:22px 0;padding:21px;background:linear-gradient(110deg,#171733,#0d1822)}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.card{padding:17px}.metric{font-size:28px;font-weight:900;margin-top:7px}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.section{margin-bottom:14px}.st{font-size:17px;font-weight:900;margin-bottom:12px}.skill{margin:12px 0}.r{display:flex;justify-content:space-between}.bar{height:7px;background:#202b3a;border-radius:8px;margin-top:5px}.fill{height:100%;background:linear-gradient(90deg,#795cff,#20c6a8);border-radius:8px}.road{display:grid;gap:9px}.item{border:1px solid #263247;border-radius:12px;padding:14px}.pill{font-size:10px;background:#1b2540;color:#c1caff;padding:4px 7px;border-radius:6px;margin-left:6px}.chat{display:flex;gap:7px;margin-top:12px}.chat input,textarea{width:100%;background:#0b121c;border:1px solid #2a374a;color:#fff;border-radius:10px;padding:11px}.chat input{flex:1}.answer{margin-top:10px;padding:12px;background:#17202d;border-radius:11px;line-height:1.55}.actions{display:grid;gap:8px}.action{border:1px solid #263247;padding:12px;border-radius:11px}button{border:0;border-radius:10px;padding:10px 14px;background:#7658ff;color:white;font-weight:800;cursor:pointer}.secondary{background:#222d3f}.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:20px}.modalbox{max-width:650px;width:100%;background:#0d141e;border:1px solid #2a374b;border-radius:17px;padding:21px}.q{padding:12px;background:#111a27;border-radius:10px;margin:8px 0}.resource{display:flex;justify-content:space-between;border-bottom:1px solid #202a39;padding:12px}.resource a{color:#a798ff}@media(max-width:900px){.side{display:none}.cards{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}}@media(max-width:550px){.main{padding:15px}.cards{grid-template-columns:1fr}.top{display:block}.title{font-size:26px}}
-</style></head><body><div class="app"><aside class="side"><div class="logo">PathPilot <b>AI</b></div><div class="nav"><button class="active" onclick="view('overview',this)">◈ Overview</button><button onclick="view('path',this)">◎ Learning Path</button><button onclick="assessment()">◉ Skill Assessment</button><button onclick="view('resources',this)">▣ Resources</button><button onclick="document.querySelector('#msg').focus()">◌ AI Coach</button></div></aside>
+</style></head><body><div class="app"><aside class="side"><div class="logo">PathPilot <b>AI</b></div><div class="nav"><button class="active" onclick="view('overview',this)">◈ Overview</button><button onclick="view('path',this)">◎ Learning Path</button><button onclick="assessment()">◉ Skill Assessment</button><button onclick="view('resources',this)">▣ Resources</button><button onclick="document.querySelector('#msg').focus()">◌ AI Coach</button><button onclick="handleLogout()" style="color:#d9534f;margin-top:10px">◆ Logout</button></div></aside>
 <main class="main"><div class="top"><div><div class="eyebrow">PERSONALIZED LEARNING INTELLIGENCE</div><div class="title" id="hello">Good morning 👋</div><div class="muted">Your roadmap adapts to your goal, skills, time and performance.</div></div><button onclick="profileModal()">Edit learner profile</button></div>
 <section id="overview"><div class="hero"><h2>🎯 <span id="goal">Machine Learning Engineer</span></h2><div class="muted" id="line">Intermediate · 10 hours/week</div></div><div class="cards"><div class="card"><div class="small">Readiness</div><div class="metric" id="progress">—</div></div><div class="card"><div class="small">Skill gaps</div><div class="metric" id="gaps">—</div></div><div class="card"><div class="small">Weekly time</div><div class="metric" id="hours">—</div></div><div class="card"><div class="small">Next milestone</div><div class="metric" style="font-size:16px" id="next">—</div></div></div>
 <div class="layout"><div><div class="card section"><div class="st">Skill development</div><div id="skills"></div></div><div class="card"><div class="st">Personalized roadmap</div><div class="road" id="road"></div></div></div><div><div class="card section"><div class="st">Next best actions</div><div class="actions"><div class="action"><b id="focus">—</b><div class="small">Highest-impact gap</div></div><div class="action"><b id="proj">—</b><div class="small">Portfolio evidence</div></div><button onclick="assessment()">Take adaptive assessment</button></div></div><div class="card"><div class="st">AI Coach</div><div class="muted">Ask naturally about your plan, career, skills, projects, resources or constraints.</div><div class="chat"><input id="msg" placeholder="e.g. I have 6 weeks left. What should I change?"><button onclick="ask()">Ask</button></div><div id="answer"></div></div></div></div></section>
@@ -9,23 +9,179 @@
 <section id="resources" style="display:none"><div class="card"><div class="st">Learning resources</div><div id="res"></div></div></section></main></div>
 <div class="modal" id="profile"><div class="modalbox"><h2>Build your learner profile</h2><p class="muted">Describe yourself naturally. PathPilot uses this to shape your plan.</p><textarea id="desc" rows="5" placeholder="I want to become an AI Engineer. I know Python and basic ML. I am weak in deep learning and have 8 hours per week."></textarea><div style="margin-top:10px"><input id="name" placeholder="Name" value="Learner"></div><div style="display:flex;gap:7px;margin-top:11px"><button onclick="saveProfile()">Generate path</button><button class="secondary" onclick="closeM('profile')">Cancel</button></div></div></div>
 <div class="modal" id="test"><div class="modalbox"><h2>Skill assessment</h2><p class="muted">Your result will update the learner model and regenerate the roadmap.</p><div id="qs"></div><button onclick="submitTest()">Update my path</button><button class="secondary" onclick="closeM('test')">Close</button></div></div>
+<div id="auth-screen" style="display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#070a10;z-index:1000;align-items:center;justify-content:center">
+  <div class="modalbox" style="width:100%;max-width:400px;margin:0">
+    <div class="logo" style="margin:0 0 20px">PathPilot <b>AI</b></div>
+    <h2 id="auth-title">Sign up to get started</h2>
+    <div style="margin-bottom:15px">
+      <input id="auth-email" type="email" placeholder="Email" style="width:100%;background:#0b121c;border:1px solid #2a374a;color:#fff;border-radius:10px;padding:11px;margin-bottom:10px">
+      <input id="auth-password" type="password" placeholder="Password (min 6 chars)" style="width:100%;background:#0b121c;border:1px solid #2a374a;color:#fff;border-radius:10px;padding:11px">
+    </div>
+    <button id="auth-submit" onclick="handleAuth()" style="width:100%;margin-bottom:10px">Sign up</button>
+    <button class="secondary" id="auth-toggle" onclick="toggleAuthMode()" style="width:100%">Have an account? Log in</button>
+    <div id="auth-error" style="color:#d9534f;margin-top:10px;display:none"></div>
+  </div>
+</div>
 <script>
-const API="http://127.0.0.1:8000";let p={name:"Learner",goal:"Machine Learning Engineer",experience:"Intermediate",interests:["AI"],completed_courses:[],weekly_hours:10,preferences:[],skills:{Python:82,Statistics:61,SQL:45,"Machine Learning":54,"Deep Learning":37,NLP:29,Deployment:18,MLOps:12}},history=[];
-const qs=[["Python","What is a Python list comprehension useful for?"],["Statistics","What does a confidence interval represent?"],["Machine Learning","Why split data into train and test sets?"],["Deep Learning","What is backpropagation used for?"],["NLP","What is a text embedding?"]];
-async function post(u,b){let r=await fetch(API+u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});return r.json()}
-function load(){post("/api/profile",p).then(render).catch(()=>alert("Backend not running. Start python -m uvicorn app.main:app --reload"))}
+/* ── Configuration ───────────────────────────────────── */
+const CONFIG = {
+  API_BASE: "http://127.0.0.1:8000",   // ← change this for deployment
+};
+const API = CONFIG.API_BASE;
+
+// Get or clear token
+function getToken() {
+  return localStorage.getItem("auth_token");
+}
+
+function setToken(token) {
+  localStorage.setItem("auth_token", token);
+}
+
+function clearToken() {
+  localStorage.removeItem("auth_token");
+}
+
+let p={name:"Learner",goal:"Machine Learning Engineer",experience:"Intermediate",interests:["AI"],completed_courses:[],weekly_hours:10,preferences:[],skills:{Python:82,Statistics:61,SQL:45,"Machine Learning":54,"Deep Learning":37,NLP:29,Deployment:18,MLOps:12}},history=[];
+const QUESTIONS=[["Python","What is a Python list comprehension useful for?"],["Statistics","What does a confidence interval represent?"],["Machine Learning","Why split data into train and test sets?"],["Deep Learning","What is backpropagation used for?"],["NLP","What is a text embedding?"]];
+
+async function post(u,b){
+  const token = getToken();
+  const headers = {"Content-Type":"application/json"};
+  if (token) {
+    headers["Authorization"] = "Bearer " + token;
+  }
+  let r = await fetch(API+u, {method:"POST", headers, body:JSON.stringify(b)});
+  return r.json();
+}
+
+async function get(u){
+  const token = getToken();
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = "Bearer " + token;
+  }
+  let r = await fetch(API+u, {method:"GET", headers});
+  return r.json();
+}
+
+function load(){
+  const token = getToken();
+  if (!token) {
+    // No token, show login screen
+    document.querySelector(".app").style.display = "none";
+    document.getElementById("auth-screen").style.display = "flex";
+    return;
+  }
+  
+  // Token exists, load dashboard
+  document.querySelector(".app").style.display = "flex";
+  document.getElementById("auth-screen").style.display = "none";
+  
+  // Try to load saved profile from database
+  get("/api/profile")
+    .then(d => {
+      if (d && d.profile) {
+        // Profile exists in database, use it
+        p = d.profile;
+        render(d);
+      } else {
+        // Profile not found or error
+        alert("Could not load profile: " + (d.detail || "Unknown error"));
+        handleLogout();
+      }
+    })
+    .catch((err) => {
+      alert("Backend not running or auth error");
+      handleLogout();
+    });
+}
+
+function handleLogout() {
+  post("/api/logout", {token: getToken()}).then(() => {
+    clearToken();
+    load();
+  }).catch(() => {
+    clearToken();
+    load();
+  });
+}
+
 function render(d){hello.textContent=`Good morning, ${p.name} 👋`;goal.textContent=p.goal;line.textContent=`${p.experience} · ${p.weekly_hours} hours/week · ${d.role}`;let vals=Object.values(p.skills);progress.textContent=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)+"%";gaps.textContent=d.gaps.filter(x=>x.gap>0).length;hours.textContent=p.weekly_hours+"h";next.textContent=d.roadmap[0]?.milestone||"Start";focus.textContent=d.gaps[0]?.skill||"Next milestone";proj.textContent=d.roadmap[0]?.project||"Portfolio project";skills.innerHTML=Object.entries(p.skills).map(([k,v])=>`<div class="skill"><div class="r"><span>${k}</span><b>${v}%</b></div><div class="bar"><div class="fill" style="width:${v}%"></div></div></div>`).join("");let h=d.roadmap.map(x=>`<div class="item"><b>${x.id}. ${x.skill}</b><span class="pill">${x.status}</span><div class="small" style="margin-top:6px">Prerequisites: ${x.prerequisites.join(", ")||"Foundation"}</div><div style="margin-top:6px">📚 ${x.resource} · 🛠 ${x.project}</div><div class="small" style="margin-top:5px">Milestone: ${x.milestone}</div>${x.url?`<a href="${x.url}" target="_blank" style="color:#a798ff;font-size:12px">Open resource ↗</a>`:""}</div>`).join("");road.innerHTML=h;road2.innerHTML=h}
-function ask(){let m=msg.value.trim();if(!m)return;history.push({role:"user",content:m});post("/api/chat",{profile:p,message:m,history}).then(d=>{
+
+function ask(){let m=msg.value.trim();if(!m)return;history.push({role:"user",content:m});post("/api/chat",{message:m,history}).then(d=>{
  if(d.profile) p=d.profile;
  history.push({role:"assistant",content:d.answer});
  answer.innerHTML=`<div class="answer">${d.answer}</div>`;
  if(d.roadmap){render({role:d.role||"",gaps:d.gaps||[],roadmap:d.roadmap});}
+ msg.value="";
 })}
+
 function view(id,b){["overview","path","resources"].forEach(x=>document.getElementById(x).style.display=x===id?"block":"none");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="resources")fetch(API+"/api/resources").then(r=>r.json()).then(d=>res.innerHTML=d.resources.map(x=>`<div class="resource"><span><b>${x.title}</b><br><small>${x.skill} · ${x.type} · ${x.time}</small></span><a href="${x.url}" target="_blank">Open ↗</a></div>`).join(""))}
+
 function profileModal(){document.getElementById("profile").style.display="flex"}
+
 function closeM(x){document.getElementById(x).style.display="none"}
-function saveProfile(){let t=desc.value.toLowerCase();p.name=name.value||"Learner";p.goal=t.includes("ai engineer")||t.includes("llm")?"AI Engineer":t.includes("data scientist")?"Data Scientist":t.includes("software engineer")?"Software Engineer":"Machine Learning Engineer";p.experience=t.includes("beginner")?"Beginner":t.includes("advanced")?"Advanced":"Intermediate";let hm=t.match(/(\d+)\s*(?:hours|hrs|hour)/);if(hm)p.weekly_hours=+hm[1];if(t.includes("deep learning"))p.skills["Deep Learning"]=t.includes("weak")?30:55;if(t.includes("python"))p.skills.Python=Math.max(p.skills.Python,70);closeM("profile");load()}
-function assessment(){qs.innerHTML=qs.map((x,i)=>`<div class="q"><b>${i+1}. ${x[1]}</b><br><button class="secondary" onclick="this.parentNode.dataset.score=70">I understand this concept</button> <button class="secondary" onclick="this.parentNode.dataset.score=35">I need to learn this</button></div>`).join("");document.getElementById("test").style.display="flex"}
-function submitTest(){let result={};document.querySelectorAll(".q").forEach((x,i)=>{let s=+x.dataset.score||35;result[qs[i][0]]=s});post("/api/assess",{profile:p,results:result}).then(d=>{p=d.profile;closeM("test");load();alert(d.message)})}
+
+function saveProfile(){let t=desc.value.toLowerCase();p.name=name.value||"Learner";p.goal=t.includes("ai engineer")||t.includes("llm")?"AI Engineer":t.includes("data scientist")?"Data Scientist":t.includes("software engineer")?"Software Engineer":"Machine Learning Engineer";p.experience=t.includes("beginner")?"Beginner":t.includes("advanced")?"Advanced":"Intermediate";let hm=t.match(/(\d+)\s*(?:hours|hrs|hour)/);if(hm)p.weekly_hours=+hm[1];if(t.includes("deep learning"))p.skills["Deep Learning"]=t.includes("weak")?30:55;if(t.includes("python"))p.skills.Python=Math.max(p.skills.Python,70);closeM("profile");post("/api/profile",{profile: p}).then(render).catch(()=>alert("Failed to save profile"))}
+
+function assessment(){document.getElementById("qs").innerHTML=QUESTIONS.map((x,i)=>`<div class="q"><b>${i+1}. ${x[1]}</b><br><button class="secondary" onclick="this.parentNode.dataset.score=70">I understand this concept</button> <button class="secondary" onclick="this.parentNode.dataset.score=35">I need to learn this</button></div>`).join("");document.getElementById("test").style.display="flex"}
+
+function submitTest(){let result={};document.querySelectorAll(".q").forEach((x,i)=>{let s=+x.dataset.score||35;result[QUESTIONS[i][0]]=s});post("/api/assess",{results:result}).then(d=>{p=d.profile;closeM("test");load();alert(d.message)})}
+
+let authMode = "signup"; // "signup" or "login"
+
+function toggleAuthMode() {
+  authMode = authMode === "signup" ? "login" : "signup";
+  document.getElementById("auth-title").textContent = authMode === "signup" ? "Sign up to get started" : "Log in to your account";
+  document.getElementById("auth-submit").textContent = authMode === "signup" ? "Sign up" : "Log in";
+  document.getElementById("auth-toggle").textContent = authMode === "signup" ? "Have an account? Log in" : "New here? Sign up";
+  document.getElementById("auth-error").style.display = "none";
+}
+
+function handleAuth() {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value;
+  const errorDiv = document.getElementById("auth-error");
+  
+  if (!email || !password) {
+    errorDiv.textContent = "Email and password required";
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  if (password.length < 6) {
+    errorDiv.textContent = "Password must be at least 6 characters";
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  const endpoint = authMode === "signup" ? "/api/signup" : "/api/login";
+  const payload = {email, password};
+  
+  fetch(API + endpoint, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.token) {
+      setToken(data.token);
+      load();
+    } else if (data.detail) {
+      errorDiv.textContent = data.detail;
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.textContent = "Authentication failed";
+      errorDiv.style.display = "block";
+    }
+  })
+  .catch(err => {
+    errorDiv.textContent = "Connection error: " + err.message;
+    errorDiv.style.display = "block";
+  });
+}
+
 load();
 </script></body></html>
