@@ -2,11 +2,11 @@
 
 A Gemini-powered learning assistant that turns a learner's natural-language goal, Experience, Skills, Time budget and Feedback into an adaptive roadmap of resources, projects, prerequisites and milestones.
 
-## What is dynamic
+## What is Dynamic
 - Natural-language learner profile → role/experience/time inference
 - Skill-gap analysis against role targets
 - Prerequisite-aware roadmap generation
-- Gemini AI Coach with structured plan updates
+- 🤖 Gemini AI Coach with structured plan updates
 - AI Coach changes are reflected back into the dashboard roadmap
 - Skill assessment updates learner state and regenerates the roadmap
 - Resources and portfolio projects are tied to skills
