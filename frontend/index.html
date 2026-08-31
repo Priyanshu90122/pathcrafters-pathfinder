@@ -25,9 +25,32 @@
 <script>
 /* ── Configuration ───────────────────────────────────── */
 const CONFIG = {
-  API_BASE: "http://127.0.0.1:8000",   // ← change this for deployment
+  API_BASE:
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000"
+      : window.location.origin,
 };
 const API = CONFIG.API_BASE;
+const DEMO_MODE = !["localhost", "127.0.0.1"].includes(window.location.hostname);
+const DEMO_PROFILE = {
+  name: "PathCrafter",
+  goal: "AI Engineer",
+  experience: "Intermediate",
+  interests: ["AI", "ML", "deployment"],
+  completed_courses: [],
+  weekly_hours: 10,
+  preferences: ["practical projects"],
+  skills: {
+    Python: 82,
+    Statistics: 61,
+    SQL: 45,
+    "Machine Learning": 54,
+    "Deep Learning": 37,
+    NLP: 29,
+    Deployment: 72,
+    MLOps: 58,
+  },
+};
 
 // Get or clear token
 function getToken() {
@@ -65,28 +88,49 @@ async function get(u){
   return r.json();
 }
 
+function renderDemoDashboard() {
+  p = { ...DEMO_PROFILE };
+  render({
+    role: "AI Engineer",
+    gaps: [
+      { skill: "Deep Learning", gap: 38 },
+      { skill: "NLP", gap: 41 },
+      { skill: "MLOps", gap: 22 },
+      { skill: "Machine Learning", gap: 21 },
+    ],
+    roadmap: [
+      { id: 1, skill: "Machine Learning", status: "Current focus", prerequisites: ["Python", "Statistics"], resource: "Machine Learning Crash Course", project: "Customer churn predictor", milestone: "Reach 75% proficiency in Machine Learning", url: "https://developers.google.com/machine-learning/crash-course" },
+      { id: 2, skill: "Deep Learning", status: "Upcoming", prerequisites: ["Machine Learning"], resource: "PyTorch Tutorials", project: "PyTorch image classifier", milestone: "Reach 65% proficiency in Deep Learning", url: "https://pytorch.org/tutorials/" },
+      { id: 3, skill: "Deployment", status: "Upcoming", prerequisites: ["Python", "Machine Learning"], resource: "FastAPI Tutorial", project: "Deploy an ML API with FastAPI and Docker", milestone: "Reach 70% proficiency in Deployment", url: "https://fastapi.tiangolo.com/tutorial/" },
+      { id: 4, skill: "MLOps", status: "Upcoming", prerequisites: ["Deployment"], resource: "Made With ML", project: "ML monitoring mini-pipeline", milestone: "Reach 55% proficiency in MLOps", url: "https://madewithml.com/" },
+    ],
+  });
+  document.querySelector(".app").style.display = "flex";
+  document.getElementById("auth-screen").style.display = "none";
+}
+
 function load(){
   const token = getToken();
+  if (!token && DEMO_MODE) {
+    renderDemoDashboard();
+    return;
+  }
+
   if (!token) {
-    // No token, show login screen
     document.querySelector(".app").style.display = "none";
     document.getElementById("auth-screen").style.display = "flex";
     return;
   }
   
-  // Token exists, load dashboard
   document.querySelector(".app").style.display = "flex";
   document.getElementById("auth-screen").style.display = "none";
   
-  // Try to load saved profile from database
   get("/api/profile")
     .then(d => {
       if (d && d.profile) {
-        // Profile exists in database, use it
         p = d.profile;
         render(d);
       } else {
-        // Profile not found or error
         alert("Could not load profile: " + (d.detail || "Unknown error"));
         handleLogout();
       }
